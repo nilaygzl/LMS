@@ -6,10 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using LMSWeb.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using LMS.DataAccess;
+using System.Web;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+
+using Microsoft.AspNetCore.Authorization;
 
 namespace LMSWeb.Controllers
 {
+    [Authorize]
 
     public class AccountController : Controller
     {
@@ -32,6 +37,71 @@ namespace LMSWeb.Controllers
 
         [HttpPost]
         [ActionName("Index")]
+        public IActionResult IndexPost(User u)
+        {
+            if (u.UserName != "")
+            {
+                if (IsValidUser(u.UserName, u.Password))
+                {
+                    var user = _applicationDbContext.Users.SingleOrDefault(o => o.UserName == u.UserName);
+
+                    //var cookie = Microsoft.AspNetCore.Http.
+
+                    CookieOptions langCookie = new CookieOptions(); 
+                    
+                    langCookie.Expires = DateTime.Now.AddYears(1);
+
+                    // Kullanıcı doğrulama başarılı, rolüne göre yönlendirme yapabilirsiniz
+                    if (user.Role == UserRole.Admin)
+                    {
+                        // Admin ise, admin sayfasına yönlendirin
+                        return RedirectToAction("AdminPage", "Home");
+                    }
+                    else if (user.Role == UserRole.Instructor)
+                    {
+                        // Eğitmen ise, eğitmen sayfasına yönlendirin
+                        return RedirectToAction("InstructorPage", "Home");
+                    }
+                    else if (user.Role == UserRole.User)
+                    {
+                        // Kullanıcı ise, kullanıcı sayfasına yönlendirin
+                        return RedirectToAction("UserPage", "Home");
+                    }
+                    return RedirectToAction("Index", "Course");
+
+                }
+                // Kullanıcı adı veya şifre geçersizse veya kullanıcı bulunamazsa, hatalı kullanıcı adı veya şifre mesajı gönderin
+                ModelState.AddModelError(string.Empty, "Geçersiz kullanıcı adı veya şifre");
+            }
+
+            return View("Index");
+        }
+
+        private bool IsValidUser(string username, string password)
+        {
+
+            // Kullanıcıyı veritabanından username (kullanıcı adı) ile bulun
+            var user = _applicationDbContext.Users.SingleOrDefault(u => u.UserName == username);
+
+            if (user != null)
+            {
+                // Kullanıcının şifresini doğrulayın
+                bool isPasswordValid = user.Password == password;
+
+                if (isPasswordValid)
+                {
+                    // Kullanıcı doğruysa, burada kullanıcının rolüne göre işlem yapabilirsiniz
+                    return true; // Kullanıcı doğrulandı
+                }
+            }
+            // Kullanıcı adı veya şifre geçersizse veya kullanıcı bulunamazsa, giriş başarısızdır
+            return false;
+
+        }
+
+
+
+        #region Calismayan Bakılacak
 
         //public async Task<IActionResult> Index([FromForm] IndexRequest ındexRequest)
         //{
@@ -58,83 +128,10 @@ namespace LMSWeb.Controllers
         //    }
         //}
 
+        #endregion
 
 
-
-
-        public IActionResult IndexPost(IndexRequest model)
-        {
-            if (ModelState.IsValid)
-            {
-                var username = model.your_name;
-                var password = model.your_pass;
-
-                if (IsValidUser(username, password))
-                    //{
-                    //    // Kullanıcı doğrulama başarılı, rolüne göre yönlendirme yapabilirsiniz
-                    //    if (user.Role == UserRole.Admin)
-                    //    {
-                    //        // Admin ise, admin sayfasına yönlendirin
-                    //        return RedirectToAction("AdminPage", "Home");
-                    //    }
-                    //    else if (user.Role == UserRole.Instructor)
-                    //    {
-                    //        // Eğitmen ise, eğitmen sayfasına yönlendirin
-                    //        return RedirectToAction("InstructorPage", "Home");
-                    //    }
-                    //    else if (user.Role == UserRole.User)
-                    //    {
-                    //        // Kullanıcı ise, kullanıcı sayfasına yönlendirin
-                    //        return RedirectToAction("UserPage", "Home");
-                    //    }
-                    return RedirectToAction("Index", "Course");
-
-
-                // Kullanıcı adı veya şifre geçersizse veya kullanıcı bulunamazsa, hatalı kullanıcı adı veya şifre mesajı gönderin
-                ModelState.AddModelError(string.Empty, "Geçersiz kullanıcı adı veya şifre");
-            }
-
-            return View("Index");
-
-
-        }
-
-        private bool IsValidUser(string username, string password)
-        {
-
-            // Kullanıcıyı veritabanından username (kullanıcı adı) ile bulun
-            var user = _applicationDbContext.Users.SingleOrDefault(u => u.UserName == username);
-
-            if (user != null)
-            {
-                // Kullanıcının şifresini doğrulayın
-                bool isPasswordValid = user.Password == password;
-
-                if (isPasswordValid)
-                {
-                    // Kullanıcı doğruysa, burada kullanıcının rolüne göre işlem yapabilirsiniz
-                    return true; // Kullanıcı doğrulandı
-                }
-            }
-
-            // Kullanıcı adı veya şifre geçersizse veya kullanıcı bulunamazsa, giriş başarısızdır
-            return false;
-
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        #region Calıştırmadığım
         //private bool IsValidUser(ApplicationDbContext _applicationDbContext, string your_name, string your_pass)
         //{
         //    // Kullanıcıyı veritabanından username (kullanıcı adı) ile bulun
@@ -166,6 +163,7 @@ namespace LMSWeb.Controllers
 
         //}
 
+        #endregion
 
 
 
@@ -203,7 +201,10 @@ namespace LMSWeb.Controllers
             _applicationDbContext.SaveChanges();
 
 
-            return View("Index");
+            //return View("Index");
+
+            return RedirectToAction("Index", "Account");
+
         }
 
 

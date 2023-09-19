@@ -15,9 +15,11 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddAuthentication()
     .AddCookie("user",options =>
     {
+        options.Cookie.Name = "eLearningCookie";
+        options.AccessDeniedPath = "/Home";
         options.ExpireTimeSpan = TimeSpan.FromDays(1);
         options.SlidingExpiration = true;
-        options.LoginPath = "/account";
+        options.LoginPath = "/Account";
     });
 
 var app = builder.Build();
