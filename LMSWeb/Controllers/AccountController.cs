@@ -11,6 +11,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
 using Microsoft.AspNetCore.Authorization;
+using LMS.DataAccess.Repository.IRepository;
 
 namespace LMSWeb.Controllers
 {
@@ -19,7 +20,12 @@ namespace LMSWeb.Controllers
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _applicationDbContext;
+        //private readonly IUnitOfWork _unitOfWork;
 
+        //public AccountController(IUnitOfWork unitOfWork)
+        //{
+        //    _unitOfWork = unitOfWork;
+        //}
 
 
         public AccountController(ApplicationDbContext applicationDbContext)
@@ -47,9 +53,9 @@ namespace LMSWeb.Controllers
 
                     //var cookie = Microsoft.AspNetCore.Http.
 
-                    CookieOptions langCookie = new CookieOptions(); 
-                    
-                    langCookie.Expires = DateTime.Now.AddYears(1);
+                    //CookieOptions langCookie = new CookieOptions(); 
+
+                    //langCookie.Expires = DateTime.Now.AddYears(1);
 
                     // Kullanıcı doğrulama başarılı, rolüne göre yönlendirme yapabilirsiniz
                     if (user.Role == UserRole.Admin)
@@ -101,26 +107,29 @@ namespace LMSWeb.Controllers
 
 
 
-        #region Calismayan Bakılacak
 
-        //public async Task<IActionResult> Index([FromForm] IndexRequest ındexRequest)
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////777
+        //public async Task<IActionResult> Index([FromForm] User loginUser)
         //{
         //    try
         //    {
-        //        var user = _applicationDbContext.Users.FirstOrDefault(e => e.UserName == ındexRequest.your_name && e.Password == ındexRequest.your_pass);
+        //        //var user = _context.Users.FirstOrDefault(e => e.UserName == loginUser.UserName && e.Password == loginUser.Password);
+        //        var user = _unitOfWork.User.Get(e => e.UserName == loginUser.UserName && e.Password == loginUser.Password);
         //        if (user == null)
-        //            return Redirect("Account"); // Invalid email or password.
-        //        // Defining Cookie
+        //            return Redirect("Account"); // Invalid username or password.
+        //        // Defining Cookies
         //        List<Claim> claims = new List<Claim>();
-        //        claims.Add(new Claim("username", ındexRequest.your_name));
-        //        claims.Add(new Claim("password", ındexRequest.your_pass));
+        //        claims.Add(new Claim("id", user.UserId.ToString()));
+        //        claims.Add(new Claim("username", user.UserName));
+        //        claims.Add(new Claim("password", user.Password));
         //        claims.Add(new Claim("role", user.Role.ToString()));
         //        var claimsIdentity = new ClaimsIdentity(claims, "user");
         //        var principal = new ClaimsPrincipal(claimsIdentity);
         //        // Creating Cookie
         //        await HttpContext.SignInAsync("user", principal);
 
-        //        return RedirectToAction("Index", "Course");
+        //        return Redirect("Home");
         //    }
         //    catch (Exception)
         //    {
@@ -128,7 +137,10 @@ namespace LMSWeb.Controllers
         //    }
         //}
 
-        #endregion
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
         #region Calıştırmadığım
@@ -209,210 +221,62 @@ namespace LMSWeb.Controllers
 
 
 
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //public async Task<IActionResult> Kayit([FromForm] User loginUser)
+        //{
+        //    try
+        //    {
+        //        var user = _unitOfWork.User.Get(e => e.UserName == loginUser.UserName);
+        //        if (user != null)
+        //        {
+        //            return Redirect("Account"); // This user is already exists.
+        //        }
+        //        else
+        //        {
+        //            if (ModelState.IsValid) // User field is intentionally nullable for now can't solve the ModelState.IsValid - User field is required problem
+        //            {
+        //                _unitOfWork.User.Add(loginUser);
+        //                _unitOfWork.Save();
+        //                var newUser = _unitOfWork.User.Get(u => u.UserName == loginUser.UserName && u.Password == loginUser.Password);
+        //                List<Claim> claims = new List<Claim>();
+        //                claims.Add(new Claim("id", newUser.UserId.ToString()));
+        //                claims.Add(new Claim("username", newUser.UserName));
+        //                claims.Add(new Claim("password", newUser.Password));
+        //                claims.Add(new Claim("role", newUser.Role.ToString()));
+        //                var claimsIdentity = new ClaimsIdentity(claims, "user");
+        //                var principal = new ClaimsPrincipal(claimsIdentity);
+        //                // Creating Cookie
+        //                await HttpContext.SignInAsync("user", principal);
+        //                TempData["success"] = "User created successfully";
+        //                return RedirectToAction("Index", "Home");
+        //            }
+        //            else
+        //            {
+        //                return View("Kayit");
+        //            }
 
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
+
+
+        //public async Task<IActionResult> Logout()
+        //{
+        //    if (User.Identity.IsAuthenticated)
+        //        await HttpContext.SignOutAsync();
+        //    return RedirectToAction("Index", "Home");
+        //}
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     }
 }
 
 
-
-
-
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.AspNetCore.Authentication;
-//using Microsoft.AspNetCore.Authentication.Cookies;
-//using System;
-//using System.Collections.Generic;
-//using System.Security.Claims;
-//using System.Threading.Tasks;
-
-//namespace LMSWeb.Controllers
-//{
-//    public class AccountController : Controller
-//    {
-//        [HttpGet]
-//        public IActionResult Index()
-//        {
-//            return View();
-//        }
-
-//        [HttpPost]
-
-
-//        //public async Task<IActionResult> Indexsignin()
-//        //{
-//        //    var your_name = Request.Form["your_name"];
-//        //    var your_pass = Request.Form["your_pass"];
-
-//        //    // Örnek bir kullanıcı doğrulama mantığı, gerçek bir veritabanı sorgusu kullanmalısınız
-//        //    if (IsValidUser(your_name, your_pass))
-//        //    {
-//        //        var claims = new List<Claim>
-//        //        {
-//        //            new Claim(ClaimTypes.Name, your_name)
-//        //            // Kullanıcıya özgü diğer bilgileri burada ekleyebilirsiniz
-//        //        };
-
-//        //        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-//        //        var principal = new ClaimsPrincipal(identity);
-
-//        //        var authProperties = new AuthenticationProperties
-//        //        {
-//        //            IsPersistent = true // Oturumu kalıcı yapmak için
-//        //        };
-
-//        //        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
-
-//        //        return RedirectToAction("Index", "Home"); // Başarılı oturum açma işleminden sonra yönlendirme yapabilirsiniz
-//        //    }
-
-//        //    ModelState.AddModelError(string.Empty, "Geçersiz kullanıcı adı veya şifre");
-//        //    return View("Index");
-//        //}
-
-//        //private bool IsValidUser(string username, string password)
-//        //{
-//        //    // Kullanıcı doğrulama mantığını burada uygulayın
-//        //    // Örneğin, veritabanından kullanıcıyı kontrol edebilirsiniz
-
-//        //    // Örnek olarak basit bir kontrol:
-//        //    return username == "demo" && password == "demo123";
-//        //}
-
-//        public IActionResult Kayit()
-//        {
-//            return View();
-//        }
-//    }
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//YÖNTEM2
-
-//    using Microsoft.AspNetCore.Mvc;
-//using Microsoft.AspNetCore.Authentication.Cookies;
-//using Microsoft.AspNetCore.Authentication;
-//using Microsoft.AspNetCore.Identity;
-//using LMSWeb.Models.ViewModels;
-
-//namespace LMSWeb.Controllers
-//{
-//    public class AccountController : Controller
-//    {
-//        [HttpGet]
-//        public IActionResult Index()
-//        {
-//            return View();
-//        }
-
-//        [HttpPost]
-//        public IActionResult Index(IndexRequest model)
-//        {
-//            if (ModelState.IsValid)
-//            {
-//                var name = model.Name;
-//                var password = model.Password;
-
-//                // Kullanıcı doğrulama mantığını burada uygulayabilirsiniz.
-//                // Örneğin, veritabanından kullanıcıyı kontrol edebilirsiniz.
-
-//                if (IsValidUser(name, password))
-//                {
-//                    // Başarılı oturum açma işleminden sonra yönlendirme yapabilirsiniz
-//                    return RedirectToAction("Index", "Home");
-//                }
-
-//                ModelState.AddModelError(string.Empty, "Geçersiz kullanıcı adı veya şifre");
-//            }
-
-//            return View("Index");
-//        }
-
-//        private bool IsValidUser(string username, string password)
-//        {
-//            // Kullanıcı doğrulama mantığını burada uygulayın
-//            // Örneğin, veritabanından kullanıcıyı kontrol edebilirsiniz
-
-//            // Örnek olarak basit bir kontrol:
-//            return username == "demo" && password == "demo123";
-//        }
-
-//        public IActionResult Kayit()
-//        {
-//            return View();
-//        }
-//    }
-//}
-
-
-//YÖNTEM2.1
-//    using Microsoft.AspNetCore.Mvc;
-//using Microsoft.AspNetCore.Authentication.Cookies;
-//using Microsoft.AspNetCore.Authentication;
-//using Microsoft.AspNetCore.Identity;
-//using LMSWeb.Models.ViewModels;
-
-//namespace LMSWeb.Controllers
-//{
-//    public class AccountController : Controller
-//    {
-//        [HttpGet]
-//        public IActionResult Index()
-//        {
-//            return View();
-//        }
-
-//        [HttpPost]
-//        [ActionName("Index")]
-//        public IActionResult IndexPost(IndexRequest model)
-//        {
-//            if (ModelState.IsValid)
-//            {
-//                var name = model.Name;
-//                var password = model.Password;
-
-//                // Kullanıcı doğrulama mantığını burada uygulayabilirsiniz.
-//                // Örneğin, veritabanından kullanıcıyı kontrol edebilirsiniz.
-
-//                if (IsValidUser(name, password))
-//                {
-//                    // Başarılı oturum açma işleminden sonra yönlendirme yapabilirsiniz
-//                    return RedirectToAction("Index", "Home");
-//                }
-
-//                ModelState.AddModelError(string.Empty, "Geçersiz kullanıcı adı veya şifre");
-//            }
-
-//            return View("Index");
-//        }
-
-//        private bool IsValidUser(string username, string password)
-//        {
-//            // Kullanıcı doğrulama mantığını burada uygulayın
-//            // Örneğin, veritabanından kullanıcıyı kontrol edebilirsiniz
-
-//            // Örnek olarak basit bir kontrol:
-//            return username == "demo" && password == "demo123";
-//        }
-
-//        public IActionResult Kayit()
-//        {
-//            return View();
-//        }
-//    }
-//}

@@ -14,6 +14,9 @@ namespace LMS.DataAccess.Repository
         public ILessonRepository Lesson { get; private set; }
         public IContentRepository Content { get; private set; }
         public IUserRepository User { get; private set; }
+
+        public IEnrollmentRepository Enrollment => throw new NotImplementedException();
+
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;

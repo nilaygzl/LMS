@@ -66,11 +66,44 @@
                         <a class="nav-item nav-link" asp-area="" asp-controller="ErrorPage" asp-action="Index">ErrorPage</a>
                     </div>
                 </div>
+
+                <a href="contact.html" class="nav-item nav-link">Contact</a>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Profile</a>
+                        <div class="dropdown-menu fade-down m-0">
+                            <a class="nav-item nav-link" asp-area="" asp-controller="Profile" asp-action="Index">Adi</a>
+                            <a class="nav-item nav-link" asp-area="" asp-controller="Courses" asp-action="Index">My Courses</a>
+                            <a class="nav-item nav-link" asp-area="" asp-controller="Login" asp-action="Logout">Logout</a>
+                        </div>
+                    </div>
+                }
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <a class="nav-item nav-link" asp-area="" asp-controller="Account" asp-action="Index">Login</a>
+                }
+            </div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Logout<i class="fa fa-sign-out ms-3"></i></button>
+                </form>
+            }
+            else
+            {
+                <a asp-area="" asp-controller="Account" asp-action="Kayit" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Join Now<i class="fa fa-arrow-right ms-3"></i></a>
+            }
+
+
+
+              @*   --eski version başlangıç *@
                 @* <a href="contact.html" class="nav-item nav-link">Contact</a> *@
-                <a class="nav-item nav-link" asp-area="" asp-controller="Contact" asp-action="Index">Contact</a>
+               @*  <a class="nav-item nav-link" asp-area="" asp-controller="Contact" asp-action="Index">Contact</a>
                 <a class="nav-item nav-link" asp-area="" asp-controller="Account" asp-action="Index">Login</a>
             </div>
-            <a asp-area="" asp-controller="Account" asp-action="Kayit" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Join Now<i class="fa fa-arrow-right ms-3"></i></a>
+            <a asp-area="" asp-controller="Account" asp-action="Kayit" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Join Now<i class="fa fa-arrow-right ms-3"></i></a> *@
+           @*  ---bitiş *@
         </div>
     </nav>
     <!-- Navbar End -->
