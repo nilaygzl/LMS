@@ -1,0 +1,2 @@
+d4bbb480d8b2d2ec0c32c5fd088f1e9226e8f31f
+commiti geri alıyorum
